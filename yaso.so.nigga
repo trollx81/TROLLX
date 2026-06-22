@@ -1,0 +1,384 @@
+--==============================================================
+--  🍋 SELL LEMONS — AUTO FARM (OBSIDIAN UI EDITION)
+--  Optimized, Bug-Fixed, and Powered by Rayfield
+--==============================================================
+
+local RS = game:GetService("ReplicatedStorage")
+local CollectionService = game:GetService("CollectionService")
+local UserInputService = game:GetService("UserInputService")
+local RunService = game:GetService("RunService")
+local Players = game:GetService("Players")
+local LP = Players.LocalPlayer
+
+local function req(p) local ok, m = pcall(require, p) return ok and m or nil end
+
+-- تحميل وحدات اللعبة
+local Tycoon                = req(RS.Modules.Tycoon.Tycoon)
+local TycoonBalances        = req(RS.Modules.Tycoon.Component.TycoonBalances)
+local ClientTycoonBalances  = req(RS.Modules.Tycoon.Component.Client.ClientTycoonBalances)
+local ClientTycoonRebirth   = req(RS.Modules.Tycoon.Component.Client.ClientTycoonRebirth)
+local ClientTycoonAscension = req(RS.Modules.Tycoon.Component.Client.ClientTycoonAscension)
+local ClientTycoonEvolution = req(RS.Modules.Tycoon.Component.Client.ClientTycoonEvolution)
+local ClientTycoonPowers    = req(RS.Modules.Tycoon.Component.Client.ClientTycoonPowers)
+local ClientTycoonPhoneOffers = req(RS.Modules.Tycoon.Component.Client.ClientTycoonPhoneOffers)
+local RemoteSignal          = req(RS.Core.RemoteSignal)
+local RemoteRequest         = req(RS.Core.RemoteRequest)
+local Entity                = req(RS.Core.Entity)
+local Huge                  = req(RS.Modules.Huge)
+local Config                = req(RS.Config)
+
+-- حالة التفعيلات (State)
+getgenv().State = {
+    AutoBuy = false, AutoUpgradeEarners = false, AutoUpgradePowers = false,
+    AutoWake = false, AutoCashDrop = false, AutoPhone = false, AutoFruit = false,
+    AutoRebirth = false, AutoEvolve = false, AutoAscend = false,
+    AntiAFK = false, SpeedOn = false, SpeedVal = 16,
+}
+
+local function getTycoon() return Tycoon and Tycoon.getLocal() end
+local function afford(price, cur) local ok, r = pcall(function() return price ~= nil and price <= cur end) return ok and r end
+
+local _root, _buy, _earn = nil, {}, {}
+local function refreshCaches(t)
+    if not t or not t.Instance then return end
+    if _root == t.Instance and #_buy > 0 then return end
+    _root, _buy, _earn = t.Instance, {}, {}
+    for _, i in pairs(CollectionService:GetTagged("Tycoon.Purchase")) do 
+        if i:IsDescendantOf(_root) then table.insert(_buy, i) end 
+    end
+    for _, i in pairs(CollectionService:GetTagged("Tycoon.Earner")) do 
+        if i:IsDescendantOf(_root) then table.insert(_earn, i) end 
+    end
+end
+
+-- وظائف المزرعة الأساسية
+local function doAutoBuy(t)
+    local bal = t:GetComponent(TycoonBalances)
+    if not bal then return end
+    for _, inst in pairs(_buy) do
+        if not getgenv().State.AutoBuy then return end
+        if inst:GetAttribute("Shown") and not inst:GetAttribute("Purchased") then
+            local e = Entity.getUnsafe(inst)
+            if e and not e.Special then
+                local okp, price = pcall(function() return e:GetPrice() end)
+                if okp and afford(price, bal:GetCash()) then pcall(function() e:TryPurchaseAsync(false) end) end
+            end
+        end
+    end
+end
+
+local function doUpgradeEarners(t)
+    local bal = t:GetComponent(TycoonBalances)
+    if not bal then return end
+    for _, inst in pairs(_earn) do
+        if not getgenv().State.AutoUpgradeEarners then return end
+        local e = Entity.getUnsafe(inst)
+        if e then
+            local okl, lvl = pcall(function() return e:GetUpgradeLevel() end)
+            if okl then
+                local ok, price, count = pcall(function() return e:GetUpgradePrice(lvl, math.huge, bal:GetCash()) end)
+                if ok and count and count > 0 then pcall(function() e:UpgradeAsync(count) end) end
+            end
+        end
+    end
+end
+
+local function doUpgradePowers(t)
+    local bal = t:GetComponent(ClientTycoonBalances)
+    local pw = t:GetComponent(ClientTycoonPowers)
+    if not bal or not pw or not Config then return end
+    for name in pairs(Config.Powers) do
+        if not getgenv().State.AutoUpgradePowers then return end
+        local okl, lvl = pcall(function() return pw:GetLevel(name) end)
+        local okm, maxl = pcall(function() return pw:GetMaxLevel(name) end)
+        if okl and okm and maxl and lvl < maxl then
+            local okp, price = pcall(function() return pw:GetUpgradePrice(name) end)
+            local oki, inv = pcall(function() return bal:GetInvestors() end)
+            if okp and price and oki and afford(price, inv) then pcall(function() pw:UpgradeAsync(name) end) end
+        end
+    end
+end
+
+local function doWake(t)
+    for _, inst in pairs(_earn) do
+        if not getgenv().State.AutoWake then return end
+        local e = Entity.getUnsafe(inst)
+        if e and e.WakeAsync then pcall(function() e:WakeAsync() end) end
+    end
+end
+
+local _phoneCd = 0
+local function doPhone(t)
+    if os.clock() < _phoneCd then return end
+    local po = t:GetComponent(ClientTycoonPhoneOffers)
+    if not po then return end
+    local ok, offer = pcall(function() return po:GetCurrentOffer() end)
+    if ok and type(offer) == "number" then 
+        pcall(function() po:AcceptOffer() end) 
+        _phoneCd = os.clock() + 1.5 
+    end
+end
+
+local function tryRebirth(t)
+    local rb = t:GetComponent(ClientTycoonRebirth)
+    if not rb then return end
+    local ok, pot = pcall(function() return rb:GetPotentialInvestors() end)
+    if ok then
+        local cok, ready = pcall(function() return Huge.one < pot end)
+        if cok and ready then pcall(function() rb:RebirthAsync(false) end) end
+    end
+end
+
+local function tryEvolve(t)
+    local ev = t:GetComponent(ClientTycoonEvolution)
+    if not ev then return end
+    local ok, p = pcall(function() return ev:GetEvolutionProgress() end)
+    if ok and type(p) == "number" and p >= 1 then pcall(function() ev:EvolveAsync() end) end
+end
+
+local function tryAscend(t)
+    local a = t:GetComponent(ClientTycoonAscension)
+    if not a then return end
+    local okd, d = pcall(function() return a:IsDiscovered() end)
+    if okd and d then
+        local ok, p = pcall(function() return a:GetAscension() end)
+        if ok and type(p) == "number" and p >= 1 then pcall(function() a:AscendAsync() end) end
+    end
+end
+
+-- Cash Drops
+do
+    local ok, redeem = pcall(function() return RemoteRequest.new("CashDropService.Redeem") end)
+    local ok2, newSig = pcall(function() return RemoteSignal.new("CashDropService.New") end)
+    if ok and ok2 and redeem and newSig then
+        newSig.OnClientEvent:Connect(function(id) 
+            if getgenv().State.AutoCashDrop and id ~= nil then 
+                pcall(function() redeem:InvokeServer(id) end) 
+            end 
+        end)
+    end
+end
+
+-- Anti-AFK
+local vu = game:GetService("VirtualUser")
+LP.Idled:Connect(function()
+    if getgenv().State.AntiAFK then
+        pcall(function() vu:CaptureController(); vu:ClickButton2(Vector2.new()) end)
+    end
+end)
+
+-- Walk Speed
+RunService.Heartbeat:Connect(function()
+    if getgenv().State.SpeedOn then 
+        local c = LP.Character 
+        local h = c and c:FindFirstChildOfClass("Humanoid")
+        if h and h.WalkSpeed ~= getgenv().State.SpeedVal then 
+            h.WalkSpeed = getgenv().State.SpeedVal 
+        end 
+    end
+end)
+
+-- Auto Fruit
+local _fruit, _savedCF = {}, nil
+local function gatherFruit()
+    _fruit = {}
+    local myT = getTycoon() and getTycoon().Instance
+    for _, d in pairs(workspace:GetDescendants()) do
+        if d:IsA("BasePart") and d.Name == "ClickPart" and d.Parent and d.Parent.Name == "Fruit" then
+            local a = d 
+            while a.Parent and a.Parent ~= workspace do a = a.Parent end
+            local mine = (a.Name == "LemonTree") or (myT and d:IsDescendantOf(myT))
+            if mine then 
+                local cd = d:FindFirstChildOfClass("ClickDetector") 
+                if cd then table.insert(_fruit, {part = d, cd = cd}) end 
+            end
+        end
+    end
+end
+
+task.spawn(function()
+    local idx = 1
+    while task.wait(0.1) do
+        if getgenv().State.AutoFruit then
+            local hrp = LP.Character and LP.Character:FindFirstChild("HumanoidRootPart")
+            if hrp then
+                if not _savedCF then _savedCF = hrp.CFrame; gatherFruit(); idx = 1 end
+                if #_fruit > 0 then
+                    local f = _fruit[idx]
+                    if f and f.part and f.part.Parent then
+                        pcall(function()
+                            hrp.CFrame = CFrame.new(f.part.Position + Vector3.new(0, 3.5, 0))
+                            task.wait(0.15)
+                            local o = hrp.Position
+                            for _, g in pairs(_fruit) do
+                                if g.part and g.part.Parent and (g.part.Position - o).Magnitude <= g.cd.MaxActivationDistance then
+                                    fireclickdetector(g.cd)
+                                end
+                            end
+                        end)
+                    end
+                    idx = idx + 8 
+                    if idx > #_fruit then idx = 1 end
+                end
+            end
+        else
+            if _savedCF then 
+                local hrp = LP.Character and LP.Character:FindFirstChild("HumanoidRootPart")
+                if hrp then pcall(function() hrp.CFrame = _savedCF end) end 
+                _savedCF = nil 
+            end
+            task.wait(0.5)
+        end
+    end
+end)
+
+-- Main Loop
+task.spawn(function()
+    while task.wait(0.5) do
+        local t = getTycoon()
+        if t then 
+            refreshCaches(t)
+            pcall(function()
+                if getgenv().State.AutoBuy then doAutoBuy(t) end
+                if getgenv().State.AutoUpgradeEarners then doUpgradeEarners(t) end
+                if getgenv().State.AutoUpgradePowers then doUpgradePowers(t) end
+                if getgenv().State.AutoWake then doWake(t) end
+                if getgenv().State.AutoPhone then doPhone(t) end
+                if getgenv().State.AutoRebirth then tryRebirth(t) end
+                if getgenv().State.AutoEvolve then tryEvolve(t) end
+                if getgenv().State.AutoAscend then tryAscend(t) end
+            end)
+        end
+    end
+end)
+
+--========================= UI (OBSIDIAN x RAYFIELD) =========================
+local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
+
+local Window = Rayfield:CreateWindow({
+    Name = "🍋 Sell Lemons Farm | Obsidian UI",
+    LoadingTitle = "Loading Auto Farm...",
+    LoadingSubtitle = "by Obsidian",
+    ConfigurationSaving = {
+       Enabled = false,
+    },
+    Discord = {
+       Enabled = false,
+    },
+    KeySystem = false,
+})
+
+local TabFarm = Window:CreateTab("Auto Farm", 4483362458)
+local TabProgression = Window:CreateTab("Progression", 4483362458)
+local TabMisc = Window:CreateTab("Misc", 4483362458)
+
+-- Auto Farm Toggles
+TabFarm:CreateToggle({
+    Name = "Auto Buy Tiles",
+    CurrentValue = false,
+    Flag = "AutoBuy",
+    Callback = function(Value) getgenv().State.AutoBuy = Value end,
+})
+
+TabFarm:CreateToggle({
+    Name = "Auto Upgrade Earners",
+    CurrentValue = false,
+    Flag = "AutoUpgradeEarners",
+    Callback = function(Value) getgenv().State.AutoUpgradeEarners = Value end,
+})
+
+TabFarm:CreateToggle({
+    Name = "Auto Upgrade Powers",
+    CurrentValue = false,
+    Flag = "AutoUpgradePowers",
+    Callback = function(Value) getgenv().State.AutoUpgradePowers = Value end,
+})
+
+TabFarm:CreateToggle({
+    Name = "Auto Collect Fruit (Teleport)",
+    CurrentValue = false,
+    Flag = "AutoFruit",
+    Callback = function(Value) 
+        getgenv().State.AutoFruit = Value 
+        if Value then
+            Rayfield:Notify({Title = "Auto Fruit", Content = "Enabled - Teleporting to trees...", Duration = 3})
+        else
+            Rayfield:Notify({Title = "Auto Fruit", Content = "Disabled - Returning to original spot.", Duration = 3})
+        end
+    end,
+})
+
+TabFarm:CreateToggle({
+    Name = "Auto Wake Earners (Tap)",
+    CurrentValue = false,
+    Flag = "AutoWake",
+    Callback = function(Value) getgenv().State.AutoWake = Value end,
+})
+
+TabFarm:CreateToggle({
+    Name = "Auto Collect Cash Drops",
+    CurrentValue = false,
+    Flag = "AutoCashDrop",
+    Callback = function(Value) getgenv().State.AutoCashDrop = Value end,
+})
+
+TabFarm:CreateToggle({
+    Name = "Auto Phone Deals",
+    CurrentValue = false,
+    Flag = "AutoPhone",
+    Callback = function(Value) getgenv().State.AutoPhone = Value end,
+})
+
+-- Progression Toggles
+TabProgression:CreateToggle({
+    Name = "Auto Rebirth",
+    CurrentValue = false,
+    Flag = "AutoRebirth",
+    Callback = function(Value) getgenv().State.AutoRebirth = Value end,
+})
+
+TabProgression:CreateToggle({
+    Name = "Auto Evolve",
+    CurrentValue = false,
+    Flag = "AutoEvolve",
+    Callback = function(Value) getgenv().State.AutoEvolve = Value end,
+})
+
+TabProgression:CreateToggle({
+    Name = "Auto Ascend",
+    CurrentValue = false,
+    Flag = "AutoAscend",
+    Callback = function(Value) getgenv().State.AutoAscend = Value end,
+})
+
+-- Misc Toggles & Sliders
+TabMisc:CreateToggle({
+    Name = "Anti-AFK",
+    CurrentValue = false,
+    Flag = "AntiAFK",
+    Callback = function(Value) getgenv().State.AntiAFK = Value end,
+})
+
+TabMisc:CreateToggle({
+    Name = "Enable WalkSpeed",
+    CurrentValue = false,
+    Flag = "SpeedOn",
+    Callback = function(Value) getgenv().State.SpeedOn = Value end,
+})
+
+TabMisc:CreateSlider({
+    Name = "WalkSpeed Value",
+    Range = {16, 150},
+    Increment = 1,
+    Suffix = "Speed",
+    CurrentValue = 16,
+    Flag = "SpeedVal",
+    Callback = function(Value) getgenv().State.SpeedVal = Value end,
+})
+
+Rayfield:Notify({
+    Title = "Script Loaded",
+    Content = "Sell Lemons Obsidian V4 is ready to use!",
+    Duration = 5,
+    Image = 4483362458,
+})
