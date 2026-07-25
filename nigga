@@ -1,0 +1,1548 @@
+if Library then
+    Library:Unload()
+end
+
+game.Players.LocalPlayer.Character.Humanoid.Health = 0
+
+game:GetService('Players').LocalPlayer.CharacterAdded:Wait()
+loadstring(game:HttpGet('https://raw.githubusercontent.com/alebinh60/asmobile/refs/heads/main/anhyeuvy'))()
+
+loadstring(game:HttpGet('https://raw.githubusercontent.com/yuvic123/SKIDO-V3/refs/heads/main/fixed%20fireclick'))()
+
+local placeId = game.PlaceId
+
+if placeId == 17887390746 or placeId == 17887392216 or placeId == 17793786340 or placeId == 14202073004 then
+    loadstring(game:HttpGet('https://raw.githubusercontent.com/alebinh60/asmobile/refs/heads/main/unnamed'))()
+
+    return
+end
+
+local isDaHood = (game.PlaceId == 2788229376)
+
+if not game:IsLoaded() then
+    game.Loaded:Wait()
+end
+if getnamecallmethod then
+    loadstring(game:HttpGet('https://raw.githubusercontent.com/Pixeluted/adoniscries/main/Source.lua', true))()
+end
+
+coroutine.wrap(function()
+    local success, err = pcall(function()
+        local gamerawmetatable = getrawmetatable(game)
+
+        setreadonly(gamerawmetatable, false)
+
+        old__namecall1 = gamerawmetatable.__namecall
+        gamerawmetatable.__namecall = newcclosure(function(self, ...)
+            local args = {...}
+            local remoteName = tostring(args[1])
+            local blockedRemotes = {
+                TeleportDetect = true,
+                CHECKER_1 = true,
+                CHECKER = true,
+                GUI_CHECK = true,
+                OneMoreTime = true,
+                checkingSPEED = true,
+                BANREMOTE = true,
+                PERMAIDBAN = true,
+                KICKREMOTE = true,
+                BR_KICKPC = true,
+                BR_KICKMOBILE = true,
+            }
+
+            if blockedRemotes[remoteName] then
+                return
+            end
+
+            return old__namecall1(self, ...)
+        end)
+    end)
+
+    if not success then
+        warn('[Anti-RemoteBlock] Executor not support hook metatable (__namecall). Skipped.')
+    end
+
+    warn('[+] matcha : anticheat bypassed.')
+end)()
+
+local repo = 'https://raw.githubusercontent.com/Kazamatcha/asmobile/refs/heads/main/'
+local Library = loadstring(game:HttpGet(repo .. 'Library.lua'))()
+local ThemeManager = loadstring(game:HttpGet(repo .. 'addons/ThemeManager.lua'))()
+local SaveManager = loadstring(game:HttpGet(repo .. 'addons/SaveManager.lua'))()
+local Options = Library.Options
+local Toggles = Library.Toggles
+
+Library.ShowToggleFrameInKeybinds = true
+Library.ShowCustomCursor = true
+Library.NotifySide = 'Right'
+
+local TextChatService = game:GetService('TextChatService')
+local chatWindow = TextChatService:FindFirstChild('ChatWindowConfiguration')
+local ChatEnabled = true
+
+if ChatEnabled and chatWindow then
+    chatWindow.Enabled = true
+end
+
+local Camera = workspace.CurrentCamera
+local Username = '@' .. game.Players.LocalPlayer.Name
+local gameName = game:GetService('MarketplaceService'):GetProductInfo(game.PlaceId).Name
+local FooterText = 'Troll.xx | By TROLLX| ' .. gameName .. ' | ' .. Username
+local Window = Library:CreateWindow({
+    Title = 'Troll.xx',
+    Footer = FooterText,
+    Icon = 73222111987577,
+    NotifySide = 'Right',
+    ShowCustomCursor = false,
+    AutoShow = true,
+    MobileButtonsSide = 'Left',
+})
+local plr = game.Players.LocalPlayer
+local mps = game:GetService('MarketplaceService')
+local ownerList = {
+    anhchangm5 = true,
+    Dao_Beo = true,
+    anhchangm52 = true,
+    anhaycogihontoi = true,
+    anhchongyeuvo = true,
+    anhchangm53 = true,
+}
+
+getgenv().premiumUsers = {}
+
+Library:Notify('yaso why you nigga😂', 15)
+
+local isOwner = ownerList[plr.Name] == true
+
+local function checkPremium()
+    local owns = false
+
+    pcall(function()
+        owns = mps:UserOwnsGamePassAsync(plr.UserId, 1651339821)
+    end)
+
+    return owns or getgenv().premiumUsers[plr.Name] == true
+end
+local hasPremium = checkPremium()
+
+if isOwner then
+    Library:Notify('Owner Troll.xx User! Welcome ' .. plr.DisplayName .. ' (@' .. plr.Name .. ')', 15)
+end
+if hasPremium then
+    Library:Notify('nigga niUser! Welcome ' .. plr.DisplayName .. ' (@' .. plr.Name .. ')', 10)
+end
+if not isOwner then
+    if not hasPremium then
+        Library:Notify('Freemium User! Welcome ' .. plr.DisplayName .. ' (@' .. plr.Name .. ')', 10)
+    end
+end
+
+local Tabs = {
+    Main = Window:AddTab('Main', 'sword'),
+    Target = Window:AddTab('Target', 'target'),
+    Player = Window:AddTab('Player', 'users'),
+    Visual = Window:AddTab('Visual', 'eye'),
+    World = Window:AddTab('World', 'trees'),
+    Character = Window:AddTab('Character', 'user'),
+    Misc = Window:AddTab('Misc', 'heart'),
+    Extra = Window:AddTab('Extra', 'star'),
+    ['UI Settings'] = Window:AddTab('UI Settings', 'settings'),
+}
+local previousTargetHealth = {}
+local BuyingActive = false
+local AutoKillActive = false
+local AutoHealActive = false
+local AutoArmorActive = false
+
+getgenv().troll.xx = {}
+
+local trollxx = {
+    TargetAim = {
+        Enabled = true,
+        Target = 'None',
+        AutoSelect = false,
+        PredictMode = '',
+        AutoFire = false,
+        Strafe = false,
+        VisualizeStrafe = false,
+        VisualizeStrafeInlineColor = Color3.fromRGB(255, 255, 255),
+        VisualizeStrafeOutlineColor = Color3.fromRGB(255, 255, 255),
+        StrafeMethod = 'Randomize',
+        Highlight = true,
+        HighlightOutlineColor = Color3.fromRGB(255, 255, 255),
+        Tracer = true,
+        TracerPosition = 'Tool',
+        TracerFillColor = Color3.fromRGB(255, 255, 255),
+        TracerOutlineColor = Color3.fromRGB(0, 0, 0),
+        LookAt = false,
+        SpectateTarget = false,
+        UseHackFlame = false,
+        AutoStomp = false,
+        Prediction = 0,
+        AutoPredict = false,
+        HitPart = 'Head',
+        Offset = 0,
+		RandomStrafe = false,
+		RandomStrafeDelay = 3,
+        JumpOffset = 0,
+        AirPartEnabled = false,
+        AirPart = 'Head',
+        Resolver = false,
+        Resolvermode = '',
+        TargetStats = false,
+        Autokill = false,
+        DotCircle = false,
+        Spoofer = true,
+        TrashTalk = false,
+    },
+    HitEffects = {
+        HitSounds = false,
+        HitSoundID = 'rbxassetid://6534948092',
+        HitSoundVolume = 5,
+        HitNotifications = false,
+        HitNotificationsTime = 3,
+        HitChams = {
+            Enabled = false,
+            Color = Color3.fromRGB(255, 255, 255),
+            Lifetime = 3,
+            Transparency = 0.7,
+            Material = 'Neon',
+        },
+        HitEffect = {
+            Enabled = false,
+            Type = 'Coom',
+            Color = Color3.fromRGB(255, 255, 255),
+        },
+        HitSkeleton = {
+            Enabled = false,
+            Color = Color3.fromRGB(255, 255, 255),
+        },
+    },
+    Checks = {
+        Wall = false,
+        Forcefield = false,
+        Alive = false,
+        Team = false,
+    },
+    KillAura = {
+        Enabled = false,
+        Active = false,
+        Range = 250,
+        Silent = false,
+        Visualize = false,
+        StompAura = false,
+        Whitelist = {},
+    },
+    RapidFire = {Enabled = false},
+    Wallbang = {Enabled = false},
+    HitboxExpander = {
+        Enabled = false,
+        Visualize = false,
+        Color = Color3.fromRGB(255, 255, 255),
+        OutlineColor = Color3.fromRGB(255, 255, 255),
+        FillTransparency = 0.5,
+        OutlineTransparency = 0.3,
+        Size = 15,
+    },
+    Movement = {
+        JumpPowerEnabled = false,
+        JumpPower = 50,
+    },
+}
+local tracers = {}
+local TracerConnections = {}
+local LP = game.Players.LocalPlayer
+
+-- Function createTracer
+local function createTracer(ply)
+    if not LP.Character or not ply.Character then return end
+    local lpChar = LP.Character
+    local targetChar = ply.Character
+
+    local hitPartName = matchacc.TargetAim.HitPart
+    local hitPart = targetChar:FindFirstChild(hitPartName)
+    if not hitPart then return end
+
+    local fromPart
+    if matchacc.TargetAim.TracerPosition == 'UpperTorso' then
+        fromPart = lpChar:FindFirstChild('UpperTorso')
+    else -- 'Tool'
+        local tool = lpChar:FindFirstChildOfClass('Tool')
+        if tool and tool:FindFirstChild('Handle') then
+            fromPart = tool.Handle
+        else
+            fromPart = lpChar:FindFirstChild('RightHand')
+        end
+    end
+    if not fromPart then return end
+
+    if tracers[ply] then
+        tracers[ply]:Destroy()
+        tracers[ply] = nil
+    end
+
+    local att1 = Instance.new("Attachment", fromPart)
+    local att2 = Instance.new("Attachment", hitPart)
+
+    local beam = Instance.new("Beam")
+    beam.Attachment0 = att1
+    beam.Attachment1 = att2
+    beam.Color = ColorSequence.new(matchacc.TargetAim.TracerFillColor)
+    beam.Width0 = 0.10
+    beam.Width1 = 0.10
+	beam.FaceCamera = true
+	beam.LightEmission = 0
+	beam.LightInfluence = 0
+	beam.Transparency = NumberSequence.new({
+	    NumberSequenceKeypoint.new(0, 0),
+	    NumberSequenceKeypoint.new(1, 0),
+	})
+    beam.Texture = "" -- Streak texture for better visual
+    beam.TextureSpeed = 5
+    beam.TextureLength = 2
+    beam.Parent = fromPart
+
+    tracers[ply] = beam
+
+    -- Handle target respawn
+    if TracerConnections[ply] then
+        TracerConnections[ply]:Disconnect()
+    end
+    TracerConnections[ply] = ply.CharacterAdded:Connect(function(newChar)
+        task.wait(0.2)
+        local newHitPart = newChar:WaitForChild(hitPartName)
+        if tracers[ply] then
+            local newAtt = Instance.new("Attachment", newHitPart)
+            tracers[ply].Attachment1 = newAtt
+        end
+    end)
+	LP.CharacterAdded:Connect(function()
+	    task.wait(0.2)
+	    for ply in pairs(tracers) do
+	        createTracer(ply)
+	    end
+	end)
+end
+
+local function removeTracer(ply)
+    if tracers[ply] then
+        tracers[ply]:Destroy()
+        tracers[ply] = nil
+    end
+    if TracerConnections[ply] then
+        TracerConnections[ply]:Disconnect()
+        TracerConnections[ply] = nil
+    end
+end
+getgenv().targetlist = {}
+local MultiTargetEnabled = false
+local MultiTargetConnection = nil
+local TargetLabel = nil
+local SelectAllButton = nil
+local RemoveAllButton = nil
+local StompOrAutokill = function()
+    return trollxx.TargetAim.AutoStomp or trollxx.TargetAim.Autokill
+end
+local function toggleTargetInList(target)
+    if not target then return false end
+    local name = target.Name
+    local idx = table.find(targetlist, name)
+    if idx then
+        table.remove(targetlist, idx)
+        return false -- removed
+    else
+        table.insert(targetlist, name)
+        return true -- added
+    end
+end
+local oldVelPos = {}
+local DotCircle = Drawing.new('Circle')
+
+DotCircle.Visible = false
+DotCircle.Filled = true
+DotCircle.Radius = 5
+DotCircle.Thickness = 1.5
+DotCircle.Color = Color3.fromRGB(255, 255, 255)
+DotCircle.Transparency = 1
+
+if not LPH_OBFUSCATED then
+    LPH_JIT = function(...)
+        return ...
+    end
+    LPH_NO_VIRTUALIZE = function(...)
+        return ...
+    end
+end
+
+local BodyClone = game:GetObjects('rbxassetid://8246626421')[1]
+
+BodyClone.Parent = workspace
+
+BodyClone.Humanoid:Destroy()
+BodyClone.Head.Face:Destroy()
+
+for _, v in pairs(BodyClone:GetDescendants())do
+    if v:IsA('BasePart') or v:IsA('MeshPart') then
+        v.CanCollide = false
+        v.Transparency = 1
+    end
+end
+
+BodyClone.HumanoidRootPart.Transparency = 1
+BodyClone.HumanoidRootPart.Velocity = Vector3.zero
+BodyClone.HumanoidRootPart.CFrame = CFrame.new(9999, 9999, 9999)
+
+local BodyCloneHighlight = Instance.new('Highlight')
+
+BodyCloneHighlight.Enabled = false
+BodyCloneHighlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+BodyCloneHighlight.FillColor = Color3.fromRGB(0, 255, 0)
+BodyCloneHighlight.OutlineColor = Color3.fromRGB(255, 255, 255)
+BodyCloneHighlight.FillTransparency = 0.3
+BodyCloneHighlight.OutlineTransparency = 0
+BodyCloneHighlight.Adornee = BodyClone
+BodyCloneHighlight.Parent = BodyClone
+
+local GlowLight = Instance.new('PointLight')
+
+GlowLight.Color = Color3.fromRGB(255, 255, 255)
+GlowLight.Brightness = 4
+GlowLight.Range = 4
+GlowLight.Parent = BodyClone.HumanoidRootPart
+
+local DesyncLine = Drawing.new('Line')
+
+DesyncLine.Thickness = 2
+DesyncLine.Color = Color3.fromRGB(255, 255, 255)
+DesyncLine.Visible = false
+DesyncLine.Transparency = 1
+local ka_tracer = Instance.new('Part')
+
+ka_tracer.Size = Vector3.new(0.2, 0.2, 0.2)
+ka_tracer.Material = Enum.Material.Neon
+ka_tracer.Color = Color3.fromRGB(255, 255, 255)
+ka_tracer.Transparency = 1
+ka_tracer.Anchored = true
+ka_tracer.CanCollide = false
+ka_tracer.Parent = workspace
+
+local TweenService = game:GetService('TweenService')
+local HitChams = LPH_NO_VIRTUALIZE(function(Player)
+    if not matchacc.HitEffects.HitChams.Enabled then
+        return
+    end
+    if Player and Player.Character and Player.Character:FindFirstChild('HumanoidRootPart') then
+        Player.Character.Archivable = true
+
+        local Cloned = Player.Character:Clone()
+
+        Cloned.Name = 'Player Clone'
+
+        local BodyParts = {
+            'Head',
+            'UpperTorso',
+            'LowerTorso',
+            'LeftUpperArm',
+            'LeftLowerArm',
+            'LeftHand',
+            'RightUpperArm',
+            'RightLowerArm',
+            'RightHand',
+            'LeftUpperLeg',
+            'LeftLowerLeg',
+            'LeftFoot',
+            'RightUpperLeg',
+            'RightLowerLeg',
+            'RightFoot',
+        }
+
+        for _, Part in ipairs(Cloned:GetChildren())do
+            if Part:IsA('BasePart') then
+                local PartValid = false
+
+                for _, validPart in ipairs(BodyParts)do
+                    if Part.Name == validPart then
+                        PartValid = true
+
+                        break
+                    end
+                end
+
+                if not PartValid then
+                    Part:Destroy()
+                end
+            elseif Part:IsA('Accessory') or Part:IsA('Tool') or Part.Name == 'face' or Part:IsA('Shirt') or Part:IsA('Pants') or Part:IsA('Hat') then
+                Part:Destroy()
+            end
+        end
+
+        if Cloned:FindFirstChild('Humanoid') then
+            Cloned.Humanoid:Destroy()
+        end
+
+        for _, BodyPart in ipairs(Cloned:GetChildren())do
+            if BodyPart:IsA('BasePart') then
+                BodyPart.CanCollide = false
+                BodyPart.Anchored = true
+                BodyPart.Transparency = matchacc.HitEffects.HitChams.Transparency
+                BodyPart.Color = matchacc.HitEffects.HitChams.Color
+                BodyPart.Material = matchacc.HitEffects.HitChams.Material
+            end
+        end
+
+        if Cloned:FindFirstChild('Head') then
+            local Head = Cloned.Head
+
+            Head.Transparency = matchacc.HitEffects.HitChams.Transparency
+            Head.Color = matchacc.HitEffects.HitChams.Color
+            Head.Material = matchacc.HitEffects.HitChams.Material
+
+            if Head:FindFirstChild('face') then
+                Head.face:Destroy()
+            end
+        end
+
+        Cloned.Parent = game.Workspace
+
+        local tweenInfo = TweenInfo.new(matchacc.HitEffects.HitChams.Lifetime, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut, 0, true)
+
+        for _, BodyPart in ipairs(Cloned:GetChildren())do
+            if BodyPart:IsA('BasePart') then
+                local tween = TweenService:Create(BodyPart, tweenInfo, {Transparency = 1})
+
+                tween:Play()
+            end
+        end
+
+        task.delay(matchacc.HitEffects.HitChams.Lifetime, function()
+            if Cloned and Cloned.Parent then
+                Cloned:Destroy()
+            end
+        end)
+    end
+end)
+local HitChamsSkeleton = LPH_NO_VIRTUALIZE(function(Player)
+    if not matchacc.HitEffects.HitSkeleton.Enabled then
+        return
+    end
+    if Player and Player.Character and Player.Character:FindFirstChild('HumanoidRootPart') then
+        local bones = {
+            {
+                'Head',
+                'UpperTorso',
+            },
+            {
+                'UpperTorso',
+                'LowerTorso',
+            },
+            {
+                'UpperTorso',
+                'RightUpperArm',
+            },
+            {
+                'RightUpperArm',
+                'RightLowerArm',
+            },
+            {
+                'RightLowerArm',
+                'RightHand',
+            },
+            {
+                'UpperTorso',
+                'LeftUpperArm',
+            },
+            {
+                'LeftUpperArm',
+                'LeftLowerArm',
+            },
+            {
+                'LeftLowerArm',
+                'LeftHand',
+            },
+            {
+                'LowerTorso',
+                'RightUpperLeg',
+            },
+            {
+                'RightUpperLeg',
+                'RightLowerLeg',
+            },
+            {
+                'RightLowerLeg',
+                'RightFoot',
+            },
+            {
+                'LowerTorso',
+                'LeftUpperLeg',
+            },
+            {
+                'LeftUpperLeg',
+                'LeftLowerLeg',
+            },
+            {
+                'LeftLowerLeg',
+                'LeftFoot',
+            },
+        }
+        local lines = {}
+
+        for _, bonePair in ipairs(bones)do
+            local parentBone = Player.Character:FindFirstChild(bonePair[1])
+            local childBone = Player.Character:FindFirstChild(bonePair[2])
+
+            if parentBone and childBone then
+                local line = Instance.new('Part')
+
+                line.Size = Vector3.new(0.02, 0.02, (parentBone.Position - childBone.Position).Magnitude)
+                line.CFrame = CFrame.new(parentBone.Position, childBone.Position) * CFrame.new(0, 0, -line.Size.Z / 2)
+                line.Anchored = true
+                line.CanCollide = false
+                line.Transparency = matchacc.HitEffects.HitChams.Transparency
+                line.Color = matchacc.HitEffects.HitSkeleton.Color
+                line.Material = Enum.Material.Neon
+                line.Parent = workspace
+
+                local tweenInfo = TweenInfo.new(matchacc.HitEffects.HitChams.Lifetime / 0.2, Enum.EasingStyle.Sine, Enum.EasingDirection.Out)
+                local tween = TweenService:Create(line, tweenInfo, {Transparency = 1})
+
+                tween:Play()
+                table.insert(lines, line)
+            end
+        end
+
+        task.delay(matchacc.HitEffects.HitChams.Lifetime, function()
+            for _, line in ipairs(lines)do
+                if line and line.Parent then
+                    line:Destroy()
+                end
+            end
+        end)
+    end
+end)
+local FOVCircleEnabled = false
+local FOVCircleSize = 300
+local FOVInnerColor = Color3.fromRGB(255, 255, 255)
+local GradientFillEnabled = false
+local GradientColor1 = Color3.fromRGB(255, 255, 255)
+local FillTransparency = 0.5
+local InnerCircle = Drawing.new('Circle')
+
+InnerCircle.Visible = false
+InnerCircle.Thickness = 1
+InnerCircle.NumSides = 64
+InnerCircle.Filled = false
+InnerCircle.Color = FOVInnerColor
+InnerCircle.Radius = FOVCircleSize
+InnerCircle.ZIndex = 10
+
+local FillCircle = Drawing.new('Circle')
+
+FillCircle.Visible = false
+FillCircle.Filled = true
+FillCircle.Transparency = FillTransparency
+FillCircle.NumSides = 64
+FillCircle.Radius = FOVCircleSize
+FillCircle.Color = GradientColor1
+FillCircle.ZIndex = 10
+
+local players = game:GetService('Players')
+local Players = game:GetService('Players')
+local localPlayer = players.LocalPlayer
+local LocalPlayer = Players.LocalPlayer
+local RunService = game:GetService('RunService')
+local ReplicatedStorage = game:GetService('ReplicatedStorage')
+local UserInputService = game:GetService('UserInputService')
+local isMobile = UserInputService.TouchEnabled and not UserInputService.KeyboardEnabled
+local possibleRemotes = {
+    'MAINEVENT',
+    'MainEvent',
+    'Remote',
+    'Packages',
+    'MainRemotes',
+    'Bullets',
+}
+
+local function getMainRemote()
+    if ReplicatedStorage:FindFirstChild('MainEvent') then
+        return ReplicatedStorage.MainEvent
+    end
+    if ReplicatedStorage:FindFirstChild('MAINEVENT') then
+        return ReplicatedStorage.MAINEVENT
+    end
+    if ReplicatedStorage:FindFirstChild('Remote') then
+        return ReplicatedStorage.Remote
+    end
+    if ReplicatedStorage:FindFirstChild('Bullets') then
+        return ReplicatedStorage.Bullets
+    end
+
+    local mainRemotes = ReplicatedStorage:FindFirstChild('MainRemotes')
+
+    if mainRemotes and mainRemotes:FindFirstChild('MainRemoteEvent') then
+        return mainRemotes.MainRemoteEvent
+    end
+
+    local packages = ReplicatedStorage:FindFirstChild('Packages')
+
+    if packages then
+        local knit = packages:FindFirstChild('Knit')
+
+        if knit and knit:FindFirstChild('Services') then
+            local toolService = knit.Services:FindFirstChild('ToolService')
+
+            if toolService and toolService:FindFirstChild('RE') then
+                local re = toolService.RE
+
+                if re:FindFirstChild('UpdateAim') then
+                    return re.UpdateAim
+                end
+            end
+        end
+    end
+
+    return nil
+end
+
+local MainEvent = getMainRemote()
+local previousPositions = {}
+local customVelocities = {}
+local lastTarget = nil
+local t = 0
+local M1Down = false
+local lastHealth = nil
+local ka_lastHealth = {}
+local sounds = {
+    Hrntai = 'https://github.com/CongoOhioDog/SoundS/blob/main/Hrntai.wav?raw=true',
+    Henta01 = 'https://github.com/CongoOhioDog/SoundS/blob/main/henta01.wav?raw=true',
+    Kitty = 'https://github.com/CongoOhioDog/SoundS/blob/main/Kitty.mp3?raw=true',
+}
+local hitsounds = {
+    Bubble = 'rbxassetid://6534947588',
+    Lazer = 'rbxassetid://130791043',
+    Pick = 'rbxassetid://1347140027',
+    Pop = 'rbxassetid://198598793',
+    Rust = 'rbxassetid://1255040462',
+    Sans = 'rbxassetid://3188795283',
+    Fart = 'rbxassetid://130833677',
+    Big = 'rbxassetid://5332005053',
+    Vine = 'rbxassetid://5332680810',
+    UwU = 'rbxassetid://8679659744',
+    Bruh = 'rbxassetid://4578740568',
+    Skeet = 'rbxassetid://5633695679',
+    Neverlose = 'rbxassetid://6534948092',
+    Fatality = 'rbxassetid://6534947869',
+    Bonk = 'rbxassetid://5766898159',
+    Minecraft = 'rbxassetid://5869422451',
+    Gamesense = 'rbxassetid://4817809188',
+    RIFK7 = 'rbxassetid://9102080552',
+    Bamboo = 'rbxassetid://3769434519',
+    Crowbar = 'rbxassetid://546410481',
+    Weeb = 'rbxassetid://6442965016',
+    Beep = 'rbxassetid://8177256015',
+    Bambi = 'rbxassetid://8437203821',
+    Stone = 'rbxassetid://3581383408',
+    ['Old Fatality'] = 'rbxassetid://6607142036',
+    Click = 'rbxassetid://8053704437',
+    Ding = 'rbxassetid://7149516994',
+    Snow = 'rbxassetid://6455527632',
+    Laser = 'rbxassetid://7837461331',
+    Mario = 'rbxassetid://2815207981',
+    Steve = 'rbxassetid://4965083997',
+    ['Call of Duty'] = 'rbxassetid://5952120301',
+    Bat = 'rbxassetid://3333907347',
+    ['TF2 Critical'] = 'rbxassetid://296102734',
+    Saber = 'rbxassetid://8415678813',
+    Baimware = 'rbxassetid://3124331820',
+    Osu = 'rbxassetid://7149255551',
+    TF2 = 'rbxassetid://2868331684',
+    Slime = 'rbxassetid://6916371803',
+    ['Among Us'] = 'rbxassetid://5700183626',
+    One = 'rbxassetid://7380502345',
+}
+
+local function isAlive(plr)
+    if not plr or not plr.Character then
+        return false
+    end
+
+    local hum = plr.Character:FindFirstChildOfClass('Humanoid')
+
+    if not hum or hum.Health <= 0 then
+        return false
+    end
+
+    local be = plr.Character:FindFirstChild('BodyEffects')
+
+    if be then
+        local ko = be:FindFirstChild('K.O')
+        local grabbed = be:FindFirstChild('GRABBING_CONSTRAINT')
+
+        if (ko and ko.Value) or (grabbed and grabbed.Value) then
+            return false
+        end
+    end
+
+    return true
+end
+local function getBestTargetFromList()
+    local bestDist = math.huge
+    local bestTarget = nil
+    local localChar = game.Players.LocalPlayer.Character
+    if not localChar or not localChar:FindFirstChild("HumanoidRootPart") then return nil end
+    local myPos = localChar.HumanoidRootPart.Position
+    
+    local prioritizeDowned = StompOrAutokill()
+    
+    for _, name in ipairs(targetlist) do
+        local target = game.Players:FindFirstChild(name)
+        if not target or not target.Character or not target.Character:FindFirstChild("HumanoidRootPart") then
+            continue -- remove invalid
+        end
+        if not isAlive(target) and not prioritizeDowned then
+            continue -- skip downed if not prioritize
+        end
+        if prioritizeDowned and isAlive(target) then
+            continue -- skip alive if prioritize downed? Wait, Æ°u tiÃªn not alive náº¿u báº­t stomp/autokill
+        end
+        -- Forcefield check
+        if matchacc.Checks.Forcefield and target.Character:FindFirstChildWhichIsA("ForceField") then
+            continue
+        end
+        -- Team check? Assume in GetClosest, but for consistency
+        if matchacc.Checks.Team and target.Team == game.Players.LocalPlayer.Team then
+            continue
+        end
+        local dist = (myPos - target.Character.HumanoidRootPart.Position).Magnitude
+        if dist < bestDist then
+            bestDist = dist
+            bestTarget = target
+        end
+    end
+    -- Clean invalid from list
+    for i = #targetlist, 1, -1 do
+        if not game.Players:FindFirstChild(targetlist[i]) then
+            table.remove(targetlist, i)
+        end
+    end
+    return bestTarget
+end
+local function isAlive2(plr)
+    if not plr or not plr.Character then
+        return false
+    end
+
+    local hum = plr.Character:FindFirstChildOfClass('Humanoid')
+
+    if not hum or hum.Health <= 0 then
+        return false
+    end
+
+    return true
+end
+local function KnockCheck(plr)
+    if plr and plr.Character and plr.Character:FindFirstChild('BodyEffects') then
+        local ko = plr.Character.BodyEffects:FindFirstChild('K.O')
+
+        return ko and ko.Value or false
+    end
+
+    return false
+end
+local function GetClosestCharacter()
+    local closestDist = math.huge
+    local closestPlayer = nil
+    local mousePos
+
+    if UserInputService.TouchEnabled and not UserInputService.MouseEnabled then
+        mousePos = Vector2.new(Camera.ViewportSize.X / 2, Camera.ViewportSize.Y / 2)
+    else
+        mousePos = UserInputService:GetMouseLocation()
+    end
+
+    for _, player in pairs(players:GetPlayers())do
+        if player == localPlayer then
+            continue
+        end
+
+        local char = player.Character
+
+        if not char or not char:FindFirstChild('Head') or not char:FindFirstChild('HumanoidRootPart') then
+            continue
+        end
+        if not isAlive(player) and matchacc.Checks.Alive then
+            continue
+        end
+        if matchacc.Checks.Team and player.Team == localPlayer.Team then
+            continue
+        end
+        if matchacc.Checks.Forcefield and player.Character:FindFirstChildWhichIsA('ForceField') then
+            continue
+        end
+
+        local headPos, onScreen = Camera:WorldToViewportPoint(char.Head.Position)
+        local screenPos = Vector2.new(headPos.X, headPos.Y)
+        local dist = (screenPos - mousePos).Magnitude
+
+        if FOVCircleEnabled and dist > FOVCircleSize then
+            continue
+        end
+
+        local isVisible = true
+
+        if matchacc.Checks.Wall then
+            local raycastParams = RaycastParams.new()
+
+            raycastParams.FilterDescendantsInstances = {
+                localPlayer.Character,
+            }
+            raycastParams.FilterType = Enum.RaycastFilterType.Blacklist
+
+            local result = workspace:Raycast(Camera.CFrame.Position, char.Head.Position - Camera.CFrame.Position, raycastParams)
+
+            if result and result.Instance and not result.Instance:IsDescendantOf(char) then
+                isVisible = false
+            end
+        end
+        if onScreen and isVisible and dist < closestDist then
+            closestDist = dist
+            closestPlayer = player
+        end
+    end
+
+    return closestPlayer
+end
+local function createHitSound()
+    local sound = Instance.new('Sound')
+
+    sound.Parent = localPlayer.Character.HumanoidRootPart
+    sound.SoundId = matchacc.HitEffects.HitSoundID
+    sound.Volume = matchacc.HitEffects.HitSoundVolume
+
+    sound:Play()
+    sound.Ended:Connect(function()
+        sound:Destroy()
+    end)
+end
+local function SetRigTransparency(clone, trans)
+    for _, v in pairs(clone:GetDescendants())do
+        if v:IsA('BasePart') or v:IsA('MeshPart') then
+            v.Transparency = trans
+        end
+    end
+end
+local function SetRigCollisionFalse(clone)
+    for _, v in pairs(clone:GetDescendants())do
+        if v:IsA('BasePart') or v:IsA('MeshPart') then
+            v.CanCollide = false
+        end
+    end
+end
+local function SetRigColor(clone, color)
+    for _, v in pairs(clone:GetDescendants())do
+        if v:IsA('BasePart') or v:IsA('MeshPart') then
+            v.Color = color
+        end
+    end
+end
+
+
+local TargetGroup = Tabs.Target:AddLeftGroupbox('Target')
+local AutokillGroup = Tabs.Target:AddLeftGroupbox('Autokill')
+local ChecksGroup = Tabs.Target:AddRightGroupbox('Checks')
+local TargetLabel = TargetGroup:AddLabel('Target: None')
+local function updateTargetLabel()
+    if not TargetLabel then return end
+    if not MultiTargetEnabled then
+        local targetName = matchacc.TargetAim.Target
+        if targetName == 'None' then
+            TargetLabel:SetText('Target: None')
+        else
+            local target = game.Players:FindFirstChild(targetName)
+            if target then
+                TargetLabel:SetText('Target: ' .. target.DisplayName .. ' (@' .. target.Name .. ')')
+            else
+                matchacc.TargetAim.Target = 'None'
+                TargetLabel:SetText('Target: None')
+            end
+        end
+    else
+        local displays = {}
+        for _, name in ipairs(targetlist) do
+            local plr = game.Players:FindFirstChild(name)
+            if plr then
+                table.insert(displays, plr.DisplayName)
+            end
+        end
+        TargetLabel:SetText('Targets: ' .. table.concat(displays, ', ') .. ( #displays == 0 and ' None' or '' ))
+    end
+end
+local function onTargetSelect()
+    local target = GetClosestCharacter()
+    local msg
+    if MultiTargetEnabled then
+        local added = toggleTargetInList(target)
+        if added then
+            msg = 'Added: ' .. (target and target.DisplayName or 'None')
+        else
+            msg = 'Removed: ' .. (target and target.DisplayName or 'None')
+        end
+        updateTargetLabel()
+    else
+        if target then
+            matchacc.TargetAim.Target = target.Name
+            msg = 'Target: ' .. target.DisplayName .. ' (@' .. target.Name .. ')'
+        else
+            matchacc.TargetAim.Target = 'None'
+            msg = 'Target removed'
+        end
+        updateTargetLabel()
+    end
+    Library:Notify(msg, 3)
+end
+TargetGroup:AddToggle('TargetAimEnabled', {
+    Text = 'Enabled',
+    Default = true,
+    Callback = function(Value)
+        matchacc.TargetAim.Enabled = Value
+
+        if not Value then
+            matchacc.TargetAim.Target = 'None'
+            TargetLabel:SetText('Target: None')
+            SetRigTransparency(BodyClone, 1)
+
+
+            BodyCloneHighlight.Enabled = false
+            Camera.CameraSubject = localPlayer.Character.Humanoid
+        end
+    end,
+}):AddKeyPicker('TargetAimKey', {
+    Default = '',
+    Text = 'Target Aim',
+    Mode = 'Toggle',
+    Callback = function(Value)
+        if not matchacc.TargetAim.Enabled then
+            return
+        end
+        local target = GetClosestCharacter()
+        if Value and not MultiTargetEnabled then
+            if target then
+                matchacc.TargetAim.Target = target.Name
+                TargetLabel:SetText('Target: ' .. target1.DisplayName .. ' (@' .. target.Name .. ')')
+			end
+        elseif Value and MultiTargetEnabled then
+            onTargetSelect()
+        elseif not Value and MultiTargetEnabled then
+            onTargetSelect()
+        elseif not Value and not MultiTargetEnabled then
+            matchacc.TargetAim.Target = 'None'
+            TargetLabel:SetText('Target: None')
+            SetRigTransparency(BodyClone, 1)
+            BodyCloneHighlight.Enabled = false
+        end
+    end,
+})
+local MultiTargetToggle = TargetGroup:AddToggle('MultiTarget', {
+    Text = 'Multi Target',
+    Default = false,
+    Callback = function(Value)
+        MultiTargetEnabled = Value
+        targetlist = {} -- Clear list
+        updateTargetLabel()
+        if Value then
+            -- Add buttons Select All / Remove All
+            SelectAllButton = TargetGroup:AddButton('Select All', function()
+                if not MultiTargetEnabled then
+                    Library:Notify('Multi Target is not enabled!', 3)
+                    return
+                end
+                targetlist = {}
+                for _, plr in ipairs(game.Players:GetPlayers()) do
+                    if plr == game.Players.LocalPlayer then continue end
+                    if GetClosestCharacter() == plr or true then -- Add all pass GetClosest logic, but simplify: all valid
+                        -- Simulate checks in GetClosest
+                        if isAlive(plr) or StompOrAutokill() then -- Basic
+                            table.insert(targetlist, plr.Name)
+                        end
+                    end
+                end
+                updateTargetLabel()
+                Library:Notify('Selected all valid targets!', 3)
+            end)
+            RemoveAllButton = TargetGroup:AddButton('Remove All', function()
+                if not MultiTargetEnabled then
+                    Library:Notify('Multi Target is not enabled!', 3)
+                    return
+                end
+                targetlist = {}
+                updateTargetLabel()
+                matchacc.TargetAim.Target = 'None'
+                Library:Notify('Removed all targets!', 3)
+            end)
+            -- Start loop select best
+            MultiTargetConnection = RunService.Heartbeat:Connect(function()
+                local best = getBestTargetFromList()
+                if best then
+                    matchacc.TargetAim.Target = best.Name
+                elseif #targetlist == 0 then
+                    matchacc.TargetAim.Target = 'None'
+                end
+                updateTargetLabel()
+            end)
+        else
+            -- Remove buttons if exist (Library may not support remove, so hide or ignore)
+            if MultiTargetConnection then
+                MultiTargetConnection:Disconnect()
+                MultiTargetConnection = nil
+            end
+            matchacc.TargetAim.Target = 'None'
+            -- Assume buttons not re-added
+        end
+    end,
+})
+local function makeDraggable(frame)
+    local dragging = false
+    local dragInput
+    local dragStart
+    local startPos
+
+    frame.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+            dragging = true
+            dragStart = input.Position
+            startPos = frame.Position
+
+            input.Changed:Connect(function()
+                if input.UserInputState == Enum.UserInputState.End then
+                    dragging = false
+                end
+            end)
+        end
+    end)
+    frame.InputChanged:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+            dragInput = input
+        end
+    end)
+    game:GetService('UserInputService').InputChanged:Connect(function(input)
+        if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
+            if input == dragInput then
+                local delta = input.Position - dragStart
+
+                frame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+            end
+        end
+    end)
+end
+
+if game:GetService('UserInputService').TouchEnabled then
+    local selectGui = Instance.new('ScreenGui')
+
+    selectGui.Name = 'SelectTargetGui'
+    selectGui.ResetOnSpawn = false
+    selectGui.Parent = game.CoreGui
+
+    local selectBtn = Instance.new('TextButton')
+
+    selectBtn.Size = UDim2.new(0, 120, 0, 50)
+    selectBtn.Position = UDim2.new(0.5, -60, 0.85, -25)
+    selectBtn.AnchorPoint = Vector2.new(0.5, 0.5)
+    selectBtn.BackgroundColor3 = Color3.fromRGB(156, 186, 140)
+    selectBtn.Text = 'Set Target'
+    selectBtn.TextColor3 = Color3.new(1, 1, 1)
+    selectBtn.TextSize = 18
+    selectBtn.Font = Enum.Font.GothamBold
+    selectBtn.Parent = selectGui
+
+    local corner = Instance.new('UICorner')
+
+    corner.CornerRadius = UDim.new(0, 12)
+    corner.Parent = selectBtn
+
+    makeDraggable(selectBtn)
+    selectBtn.MouseButton1Click:Connect(function()
+        if not matchacc.TargetAim.Enabled then
+            Library:Notify('Target Aim is off', 3)
+            return
+        end
+        onTargetSelect() -- Use same function
+    end)
+end
+
+TargetGroup:AddToggle('AutoSelect', {
+    Text = 'Auto Select',
+    Default = false,
+    Callback = function(Value)
+        matchacc.TargetAim.AutoSelect = Value
+
+        if Value then
+            RunService:BindToRenderStep('AutoSelect', 1, function()
+                local target = GetClosestCharacter()
+
+                if lastTarget and lastTarget ~= target and lastTarget.Character then
+                    
+                    
+                end
+                if target then
+                    matchacc.TargetAim.Target = target.Name
+                else
+                    matchacc.TargetAim.Target = 'None'
+                end
+
+                lastTarget = target
+            end)
+        else
+            RunService:UnbindFromRenderStep('AutoSelect')
+
+            if lastTarget and lastTarget.Character then
+                
+                
+            end
+
+            lastTarget = nil
+        end
+    end,
+})
+local AutoFireConnection = nil
+local vu = getgenv().vu
+local uis = game:GetService("UserInputService")
+local RunService = game:GetService("RunService")
+local Camera = workspace.CurrentCamera
+
+-- Sá»­a callback AutoFire
+TargetGroup:AddToggle('AutoFire', {
+    Text = 'Auto Fire',
+    Default = false,
+    Callback = function(Value)
+        matchacc.TargetAim.AutoFire = Value
+        if Value then
+            AutoFireConnection = RunService.Heartbeat:Connect(function()
+                local placeId = game.PlaceId
+                local isDaHood = (placeId == 2788229376)
+                if isDaHood then return end
+                
+                local targetName = matchacc.TargetAim.Target
+                if targetName == 'None' then return end
+                
+                local target = game.Players:FindFirstChild(targetName)
+                if not target or not target.Character or not target.Character:FindFirstChild("HumanoidRootPart") or not target.Character:FindFirstChild("Head") then return end
+                
+                if not isAlive(target) then return end
+                
+                local localChar = game.Players.LocalPlayer.Character
+                if not localChar or not localChar:FindFirstChild("HumanoidRootPart") then return end
+                
+                local dist = (localChar.HumanoidRootPart.Position - target.Character.HumanoidRootPart.Position).Magnitude
+                if dist > 270 then return end
+                
+                -- Wall check
+                local isVisible = true
+                if matchacc.Checks.Wall then
+                    local rayParams = RaycastParams.new()
+                    rayParams.FilterDescendantsInstances = {localChar}
+                    rayParams.FilterType = Enum.RaycastFilterType.Blacklist
+                    local ray = workspace:Raycast(Camera.CFrame.Position, target.Character.Head.Position - Camera.CFrame.Position, rayParams)
+                    if ray and not ray.Instance:IsDescendantOf(target.Character) then
+                        isVisible = false
+                    end
+                end
+                if not isVisible then return end
+                
+                -- Tool check
+                local tool = localChar:FindFirstChildOfClass("Tool")
+                if not tool then return end
+                
+                -- Ammo check
+                local ammoObj = tool:FindFirstChild("Ammo")
+                local hasAmmo = true
+                if ammoObj and ammoObj:IsA("IntValue") and ammoObj.Value <= 0 then
+                    hasAmmo = false
+                end
+                
+                -- Shoot
+                if hasAmmo then
+                    tool:Activate()
+                else
+                    local mousePos = uis:GetMouseLocation()
+                    vu:Button1Down(mousePos)
+                    task.wait(0.05)
+                    vu:Button1Up(mousePos)
+                end
+            end)
+        else
+            if AutoFireConnection then
+                AutoFireConnection:Disconnect()
+                AutoFireConnection = nil
+            end
+        end
+    end,
+})
+TargetGroup:AddToggle('TrashTalk', {
+    Text = 'Trash talk when target die',
+    Default = false,
+    Callback = function(Value)
+        matchacc.TargetAim.TrashTalk = Value
+    end,
+})
+
+local Storage = {Connections = {}}
+
+local function NewConnection(signal, callback)
+    local conn = signal:Connect(callback)
+
+    table.insert(Storage.Connections, conn)
+
+    return conn
+end
+
+local Players = game:GetService('Players')
+local RunService = game:GetService('RunService')
+local Camera = workspace.CurrentCamera
+local LocalPlayer = Players.LocalPlayer
+
+TargetGroup:AddToggle('TargetStatsEnabled', {
+    Text = 'Target Stats',
+    Default = false,
+    Callback = function(v)
+        matchacc.TargetAim.TargetStats = v
+    end,
+})
+coroutine.wrap(function()
+    local Colors = {
+        Background = Color3.fromRGB(250, 248, 245),
+        Main = Color3.fromRGB(255, 255, 255),
+        Accent = Color3.fromRGB(147, 179, 141),
+        Secondary = Color3.fromRGB(200, 220, 195),
+        Border = Color3.fromRGB(220, 218, 215),
+        Text = Color3.fromRGB(80, 80, 80),
+        TextLight = Color3.fromRGB(120, 120, 120),
+        Alive = Color3.fromRGB(147, 179, 141),
+        Knocked = Color3.fromRGB(255, 193, 86),
+        Grabbing = Color3.fromRGB(255, 138, 101),
+        Dead = Color3.fromRGB(255, 107, 107),
+    }
+
+    local function IsMobile()
+        return UserInputService.TouchEnabled and not UserInputService.KeyboardEnabled
+    end
+    local function GetStatus(plr)
+        if not plr or not plr.Character then
+            return 'Dead', false, Colors.Dead
+        end
+
+        local hum = plr.Character:FindFirstChildOfClass('Humanoid')
+
+        if not hum or hum.Health <= 0 then
+            return 'Dead', false, Colors.Dead
+        end
+
+        local be = plr.Character:FindFirstChild('BodyEffects')
+
+        if be then
+            local grab = be:FindFirstChild('GRABBING_CONSTRAINT')
+            local ko = be:FindFirstChild('K.O')
+
+            if grab and grab.Value then
+                return 'Grabbing', false, Colors.Grabbing
+            end
+            if ko and ko.Value then
+                return 'Knocked', false, Colors.Knocked
+            end
+        end
+
+        return 'Alive', true, Colors.Alive
+    end
+
+    local ScreenGui = Instance.new('ScreenGui')
+
+    ScreenGui.Name = 'MatchaTargetHUD'
+    ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+    ScreenGui.ResetOnSpawn = false
+    ScreenGui.Parent = game:GetService('CoreGui')
+
+    local MainFrame = Instance.new('Frame')
+
+    MainFrame.Name = 'MainFrame'
+    MainFrame.Size = IsMobile() and UDim2.new(0, 340, 0, 140) or UDim2.new(0, 420, 0, 150)
+    MainFrame.Position = IsMobile() and UDim2.new(0.5, -170, 0.85, -70) or UDim2.new(0.5, -210, 0.75, -75)
+    MainFrame.AnchorPoint = Vector2.new(0.5, 0.5)
+    MainFrame.BackgroundColor3 = Colors.Main
+    MainFrame.BorderSizePixel = 0
+    MainFrame.Visible = false
+    MainFrame.Active = true
+    MainFrame.Parent = ScreenGui
+
+    local MainCorner = Instance.new('UICorner')
+
+    MainCorner.CornerRadius = UDim.new(0, 16)
+    MainCorner.Parent = MainFrame
+
+    local MainStroke = Instance.new('UIStroke')
+
+    MainStroke.Color = Colors.Border
+    MainStroke.Thickness = 2
+    MainStroke.Transparency = 0.3
+    MainStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+    MainStroke.Parent = MainFrame
+
+    local Shadow = Instance.new('ImageLabel')
+
+    Shadow.Name = 'Shadow'
+    Shadow.Size = UDim2.new(1, 30, 1, 30)
+    Shadow.Position = UDim2.new(0.5, 0, 0.5, 5)
+    Shadow.AnchorPoint = Vector2.new(0.5, 0.5)
+    Shadow.BackgroundTransparency = 1
+    Shadow.Image = 'rbxassetid://5554236805'
+    Shadow.ImageColor3 = Color3.fromRGB(0, 0, 0)
+    Shadow.ImageTransparency = 0.9
+    Shadow.ScaleType = Enum.ScaleType.Slice
+    Shadow.SliceCenter = Rect.new(23, 23, 277, 277)
+    Shadow.ZIndex = -1
+    Shadow.Parent = MainFrame
+
+    local AvatarContainer = Instance.new('Frame')
+
+    AvatarContainer.Name = 'AvatarContainer'
+    AvatarContainer.Size = UDim2.new(0, 85, 0, 85)
+    AvatarContainer.Position = UDim2.new(0, 15, 0, 15)
+    AvatarContainer.BackgroundColor3 = Colors.Background
+    AvatarContainer.BorderSizePixel = 0
+    AvatarContainer.Parent = MainFrame
+
+    local AvatarCorner = Instance.new('UICorner')
+
+    AvatarCorner.CornerRadius = UDim.new(0, 12)
+    AvatarCorner.Parent = AvatarContainer
+
+    local AvatarStroke = Instance.new('UIStroke')
+
+    AvatarStroke.Color = Colors.Accent
+    AvatarStroke.Thickness = 3
+    AvatarStroke.Transparency = 0
+    AvatarStroke.Parent = AvatarContainer
+
+    local Avatar = Instance.new('ImageLabel')
+
+    Avatar.Name = 'Avatar'
+    Avatar.Size = UDim2.new(1, -6, 1, -6)
+    Avatar.Position = UDim2.new(0, 3, 0, 3)
+    Avatar.BackgroundTransparency = 1
+    Avatar.Image = ''
+    Avatar.Parent = AvatarContainer
+
+    local AvatarImageCorner = Instance.new('UICorner')
+
+    AvatarImageCorner.CornerRadius = UDim.new(0, 10)
+    AvatarImageCorner.Parent = Avatar
+
+    local StatusBadge = Instance.new('Frame')
+
+    StatusBadge.Name = 'StatusBadge'
+    StatusBadge.Size = UDim2.new(0, 70, 0, 20)
+    StatusBadge.Position = UDim2.new(0.5, -35, 1, -25)
+    StatusBadge.BackgroundColor3 = Colors.Alive
+    StatusBadge.BorderSizePixel = 0
+    StatusBadge.Parent = AvatarContainer
+
+    local BadgeCorner = Instance.new('UICorner')
+
+    BadgeCorner.CornerRadius = UDim.new(0, 10)
+    BadgeCorner.Parent = StatusBadge
+
+    local StatusText = Instance.new('TextLabel')
+
+    StatusText.Size = UDim2.new(1, 0, 1, 0)
+    StatusText.BackgroundTransparency = 1
+    StatusText.Text = 'ALIVE'
+    StatusText.Font = Enum.Font.GothamBold
+    StatusText.TextSize = 11
+    StatusText.TextColor3 = Color3.fromRGB(255, 255, 255)
+    StatusText.Parent = StatusBadge
+
+    local InfoContainer = Instance.new('Frame')
+
+    InfoContainer.Name = 'InfoContainer'
+    InfoContainer.Size = IsMobile() and UDim2.new(1, -115, 1, -30) or UDim2.new(1, -115, 1, -30)
+    InfoContainer.Position = UDim2.new(0, 110, 0, 15)
+    InfoContainer.BackgroundTransparency = 1
+    InfoContainer.Parent = MainFrame
+
+    local PlayerName = Instance.new('TextLabel')
+
+    PlayerName.Name = 'PlayerName'
+    PlayerName.Size = UDim2.new(1, 0, 0, 24)
+    PlayerName.Position = UDim2.new(0, 0, 0, 0)
+    PlayerName.BackgroundTransparency = 1
+    PlayerName.Text = 'Username'
+    PlayerName.Font = Enum.Font.GothamBold
+    PlayerName.TextSize = IsMobile() and 15 or 17
+    PlayerName.TextColor3 = Colors.Text
+    PlayerName.TextXAlignment = Enum.TextXAlignment.Left
+    PlayerName.TextTruncate = Enum.TextTruncate.AtEnd
+    PlayerName.Parent = InfoContainer
+
+    local DisplayName = Instance.new('TextLabel')
+
+    DisplayName.Name = 'DisplayName'
+    DisplayName.Size = UDim2.new(1, 0, 0, 18)
+    DisplayName.Position = UDim2.new(0, 0, 0, 26)
+    DisplayName.BackgroundTransparency = 1
+    DisplayName.Text = '@displayname'
+    DisplayName.Font = Enum.Font.Gotham
+    DisplayName.TextSize = IsMobile() and 12 or 13
+    DisplayName.TextColor3 = Colors.TextLight
+    DisplayName.TextXAlignment = Enum.TextXAlignment.Left
+    DisplayName.TextTruncate = Enum.TextTruncate.AtEnd
+    DisplayName.Parent = InfoContainer
+
+    local HealthBarBG = Instance.new('Frame')
+
+    HealthBarBG.Name = 'HealthBarBG'
+    HealthBarBG.Size = UDim2.new(1, 0, 0, 8)
+    HealthBarBG.Position = UDim2.new(0, 0, 0, 52)
+    HealthBarBG.BackgroundColor3 = Colors.Background
+    HealthBarBG.BorderSizePixel = 0
+    HealthBarBG.Parent = InfoContainer
+
+    local HealthBarBGCorner = Instance.new('UICorner')
+
+    HealthBarBGCorner.CornerRadius = UDim.new(1, 0)
+    HealthBarBGCorner.Parent = HealthBarBG
+
+    local HealthBar = Instance.new('Frame')
+
+    HealthBar.Name = 'HealthBar'
+    HealthBar.Size = UDim2.new(1, 0, 1, 0)
+    HealthBar.BackgroundColor3 = Colors.Accent
+    HealthBar.BorderSizePixel = 0
+    HealthBar.Parent = HealthBarBG
+
+    local HealthBarCorner = Instance.new('UICorner')
+
+    HealthBarCorner.CornerRadius = UDim.new(1, 0)
+    HealthBarCorner.Parent = HealthBar
+
+    local HealthGradient = Instance.new('UIGradient')
+
+    HealthGradient.Color = ColorSequence.new{
+        ColorSequenceKeypoint.new(0, Colors.Accent),
+        ColorSequenceKeypoint.new(1, Colors.Secondary),
+    }
+    HealthGradient.Rotation = 90
+    HealthGradient.Parent = HealthBar
+
+    local HealthText = Instance.new('TextLabel')
+
+    HealthText.Name = 'HealthText'
+    HealthText.Size = UDim2.new(1, 0, 0, 16)
+    HealthText.Position = UDim2.new(0, 0, 0, 64)
+    HealthText.BackgroundTransparency = 1
+    HealthText.Text = '100 / 100 HP'
+    HealthText.Font = Enum.Font.GothamMedium
+    HealthText.TextSize = IsMobile() and 11 or 12
+    HealthText.TextColor3 = Colors.TextLight
+    HealthText.TextXAlignment = Enum.TextXAlignment.Left
+    HealthText.Parent = InfoContainer
+
+    local DistanceText = Instance.new('TextLabel')
+
+    DistanceText.Name = 'Di
